@@ -1,0 +1,14 @@
+# .gitattributes
+## 코드 일관성과 플랫폼 간 충돌 방지를 위함
+
+# 소스코드 자동 텍스트 인식
+* text=auto
+
+# 스크립트는 LF, Windows용 배치파일은 CRLF
+/mvnw text eol=lf
+*.cmd text eol=crlf
+
+
+# SQL 덤프나 바이너리 리소스 병합 방지
+*.sql   text merge=union
+*.png   binary
