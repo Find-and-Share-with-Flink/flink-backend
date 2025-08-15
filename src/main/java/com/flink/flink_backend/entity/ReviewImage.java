@@ -3,7 +3,8 @@ package com.flink.flink_backend.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "review_images")
+@Table(name = "review_images",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"product_review_id","image_url"}))
 public class ReviewImage {
 
     @Id
