@@ -17,3 +17,9 @@ INSERT INTO category_mappings (platform, external_type, external_id, category_id
                                                                                       ('29cm','large',271100100,5),('29cm','large',269100100,5),('29cm','large',305100100,5)
     ON CONFLICT (platform, external_type, external_id)
 DO UPDATE SET category_id=EXCLUDED.category_id;
+
+-- 쇼핑몰
+INSERT INTO vendors (vendor_id, name, rating)
+VALUES (1,'WCONCEPT',4.5),
+       (2,'29CM',4.5)
+    ON CONFLICT (vendor_id) DO UPDATE SET name=EXCLUDED.name, rating=EXCLUDED.rating;
