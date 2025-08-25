@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "product_reviews")
+@Table(name = "product_reviews",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"product_id","vendor_id","review_id"}))
 public class ProductReview {
 
     @Id
