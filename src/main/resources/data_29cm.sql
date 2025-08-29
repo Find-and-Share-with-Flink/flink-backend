@@ -11,7 +11,7 @@ INSERT INTO product_images (product_id, image_url, order_index) VALUES
     ON CONFLICT DO NOTHING;
 
 -- 가격
-INSERT INTO product_prices (product_id, vendor_id, price, total_price, shipping_fee, product_url, created_at)
+INSERT INTO product_prices (product_id, vendor_id, price, shipping_fee, product_url, created_at)
 VALUES (987654321,2,25900,28400,2500,'https://shop.29cm.co.kr/product/987654321',NOW());
 
 -- 리뷰
