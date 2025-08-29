@@ -26,7 +26,7 @@ public class ProductQueryService {
         // 전체 개수 조회
         long total = jdbc.queryForObject("""
       SELECT COUNT(*) FROM products p
-      WHERE (:query IS NULL OR p.name ILIKE :query OR p.brand ILIKE :query)
+      WHERE (:query::text IS NULL OR p.name ILIKE :query OR p.brand ILIKE :query)
     """, params, Long.class);
 
         // 페이지 데이터 + 가격/리뷰 집계
@@ -34,7 +34,7 @@ public class ProductQueryService {
       WITH base AS (
         SELECT p.product_id, p.name, p.brand, p.thumbnail_url
         FROM products p
-        WHERE (:query IS NULL OR p.name ILIKE :query OR p.brand ILIKE :query)
+        WHERE (:query::text IS NULL OR p.name ILIKE :query OR p.brand ILIKE :query)
         ORDER BY p.product_id DESC
         OFFSET :offset LIMIT :limit
       ),
