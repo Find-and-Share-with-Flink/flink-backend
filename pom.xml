@@ -12,13 +12,20 @@
 	<artifactId>flink-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>flink-backend</name>
-	<description>Demo project for Spring Boot</description>
-	<url/>
+	<description>Flink Backend</description>
+	<url>https://github.com/Find-and-Share-with-Flink/flink-backend</url>
 	<licenses>
 		<license/>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<name>Hyejeong Park</name>
+			<email>park061138@gmail.com</email>
+		</developer>
+		<developer>
+			<name>Minseo Kang</name>
+			<email>kang20@sch.ac.kr</email>
+		</developer>
 	</developers>
 	<scm>
 		<connection/>
@@ -28,6 +35,7 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<lombok.version>1.18.30</lombok.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -51,6 +59,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -79,6 +88,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
