@@ -2,6 +2,7 @@ package com.flink.flink_backend.service;
 
 import com.flink.flink_backend.dto.PageResponse;
 import com.flink.flink_backend.dto.ProductListItemDto;
+import com.flink.flink_backend.dto.ProductDetailDto;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class ProductQueryService {
         // 전체 개수 조회
         long total = jdbc.queryForObject("""
       SELECT COUNT(*) FROM products p
-      WHERE (:query IS NULL OR p.name ILIKE :query OR p.brand ILIKE :query)
+      WHERE (:query::text IS NULL OR p.name ILIKE :query OR p.brand ILIKE :query)
     """, params, Long.class);
 
         // 페이지 데이터 + 가격/리뷰 집계
@@ -33,7 +34,7 @@ public class ProductQueryService {
       WITH base AS (
         SELECT p.product_id, p.name, p.brand, p.thumbnail_url
         FROM products p
-        WHERE (:query IS NULL OR p.name ILIKE :query OR p.brand ILIKE :query)
+        WHERE (:query::text IS NULL OR p.name ILIKE :query OR p.brand ILIKE :query)
         ORDER BY p.product_id DESC
         OFFSET :offset LIMIT :limit
       ),
@@ -58,5 +59,51 @@ public class ProductQueryService {
         ));
 
         return new PageResponse<>(rows, page, size, total);
+    }
+
+    /** 상품 상세 조회 (헤더 + 이미지 목록) */
+    public ProductDetailDto detail(Long productId) {
+        var p = new MapSqlParameterSource().addValue("pid", productId);
+
+        // 1) 헤더(상품 기본 + 최저가/리뷰 집계)
+        var dto = jdbc.query("""
+      WITH price AS ( SELECT MIN(total_price) AS min_price FROM product_prices WHERE product_id=:pid ),
+           review AS ( SELECT COUNT(*) AS review_count, ROUND(AVG(score)::numeric,1) AS avg_rating
+                       FROM product_reviews WHERE product_id=:pid )
+      SELECT p.product_id, p.name, p.brand, p.created_at,
+             COALESCE(pr.min_price,0) AS min_price,
+             COALESCE(rv.review_count,0) AS review_count,
+             COALESCE(rv.avg_rating,0) AS avg_rating
+      FROM products p
+      LEFT JOIN price  pr ON TRUE
+      LEFT JOIN review rv ON TRUE
+      WHERE p.product_id = :pid
+    """, p, rs -> {
+            if (!rs.next()) return null;
+            var d = new ProductDetailDto();
+            d.setProduct_id(rs.getLong("product_id"));
+            d.setName(rs.getString("name"));
+            d.setBrand(rs.getString("brand"));
+            d.setCreated_at(rs.getTimestamp("created_at").toLocalDateTime());
+            d.setMin_price(rs.getDouble("min_price"));
+            d.setReview_count(rs.getInt("review_count"));
+            d.setAvg_rating(rs.getDouble("avg_rating"));
+            return d;
+        });
+        if (dto == null) return null;
+
+        // 2) 이미지 목록 (order_index ASC, null은 뒤로)
+        var images = jdbc.query("""
+      SELECT image_url, order_index
+      FROM product_images
+      WHERE product_id = :pid
+      ORDER BY order_index ASC NULLS LAST, image_id ASC
+    """, p, (rs, i) -> new ProductDetailDto.ImageDto(
+            rs.getString("image_url"),
+            (Integer) rs.getObject("order_index") // order_index가 null일 수 있어 getObject 사용
+        ));
+
+        dto.setImages(images);
+        return dto;
     }
 }
