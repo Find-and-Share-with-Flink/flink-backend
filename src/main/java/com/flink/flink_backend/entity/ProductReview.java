@@ -2,6 +2,9 @@ package com.flink.flink_backend.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,6 +12,8 @@ import java.util.List;
 @Entity
 @Table(name = "product_reviews",
         uniqueConstraints = @UniqueConstraint(columnNames = {"product_id","vendor_id","review_id"}))
+@Getter
+@Setter
 public class ProductReview {
 
     @Id
@@ -16,11 +21,11 @@ public class ProductReview {
     @Column(name = "product_review_id")
     private Long productReviewId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
 
@@ -49,6 +54,4 @@ public class ProductReview {
 
     @OneToMany(mappedBy = "productReview", cascade = CascadeType.ALL)
     private List<ReviewImage> images;
-
-    // getters & setters
 }

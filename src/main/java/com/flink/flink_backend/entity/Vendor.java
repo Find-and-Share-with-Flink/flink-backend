@@ -1,11 +1,16 @@
 package com.flink.flink_backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
 @Table(name = "vendors")
+@Getter
+@Setter
 public class Vendor {
 
     @Id
