@@ -34,3 +34,4 @@ build/
 
 # Secret DB config
 src/main/resources/application-secret.properties
+.env
